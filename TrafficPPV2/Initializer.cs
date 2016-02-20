@@ -381,15 +381,20 @@ namespace CSL_Traffic
         //    Logger.LogInfo("Transport Manager successfully replaced.");
         //}
 
-        T TryGetComponent<T>(string name)
+        T TryGetComponent<T>(string name) where T: MonoBehaviour
         {
             foreach (string prefix in sm_collectionPrefixes)
             {
-                GameObject go = GameObject.Find(prefix + name);
-                if (go != null)
-                    return go.GetComponent<T>();
+                T[] objects = GameObject.FindObjectsOfType<T>();
+                foreach (T o in objects)
+                {
+                    if (o.gameObject.name == prefix + name)
+                    {
+                        return o;
+                    }
+                }
             }
-
+            Logger.LogError("Failed to find component: {0}", name);
             return default(T);
         }
 
